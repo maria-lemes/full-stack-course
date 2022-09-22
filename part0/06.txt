@@ -1,0 +1,8 @@
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+server-->browser: json content
+
+note over browser:
+Server doesn't ask for a redirect
+and app uses the JavaScript code it fetched 
+from the server
+end note
