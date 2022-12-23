@@ -5,15 +5,8 @@ const Person = ({person}) => {
     <li>{person.name} {person.number}</li>
   )
 }
-const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas',
-      number: '99999'
-    }
-  ]) 
-  const [newName, setNewName] = useState('')
-  const [newNumber, setNewNumber] = useState('')
 
+const PersonForm = ({persons, setPersons, newName, setNewName, newNumber, setNewNumber}) => {
   const addPerson = (event) => {
     event.preventDefault()
     const personObject = {
@@ -41,9 +34,7 @@ const App = () => {
   }
 
   return (
-    <div>
-      <h2>Phonebook</h2>
-      <form onSubmit={addPerson}>
+    <form onSubmit={addPerson}>
         <div>
           name: <input
            value={newName}
@@ -60,12 +51,36 @@ const App = () => {
           <button type="submit">add</button>
         </div>
       </form>
-      <h2>Numbers</h2>
-      <ul>
+  )
+}
+
+const Persons = ({persons}) => {
+  return(
+    <ul>
         {persons.map(person => 
           <Person key={person.name} person={person}/>
         )}
       </ul>
+  )
+}
+
+const App = () => {
+  const [persons, setPersons] = useState([
+    { name: 'Arto Hellas',
+      number: '99999'
+    }
+  ]) 
+  const [newName, setNewName] = useState('')
+  const [newNumber, setNewNumber] = useState('')
+
+  
+  return (
+    <div>
+      <h2>Phonebook</h2>
+      <h2>Add a new person</h2>
+      <PersonForm persons={persons} setPersons={setPersons} newName={newName} setNewName={setNewName} newNumber={newNumber} setNewNumber={setNewNumber}/>
+      <h2>Numbers</h2>
+      <Persons persons={persons}/>
       
     </div>
   )
