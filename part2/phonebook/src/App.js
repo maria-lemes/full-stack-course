@@ -2,9 +2,17 @@ import { useState ,  useEffect } from 'react'
 import axios from 'axios'
 import personService from './services/persons'
 
-const Person = ({person}) => {
+const Button = ({ handleClick, text }) => (
+  <button onClick={handleClick}>
+    {text}
+  </button>
+)
+
+const Person = ({person,deleteClick}) => {
   return (
-    <li>{person.name} {person.number}</li>
+    <li>{person.name} {person.number} 
+    <Button handleClick={deleteClick} text='delete'></Button>
+    </li>
   )
 }
 
@@ -72,13 +80,27 @@ const PersonForm = ({persons, setPersons, newName, setNewName, newNumber, setNew
   )
 }
 
-const Persons = ({persons}) => {
+const handleDeleteClick = ({person,setPersons,persons}) => {
+
+  if(window.confirm(`Delete ${person.name} ?`)){
+    let deletedPerson = person
+    axios
+    .delete(`http://localhost:3001/persons/${deletedPerson.id}`)
+    .then(setPersons( persons.filter(person => person.id !== deletedPerson.id)))
+    
+  }
+  
+}
+
+
+const Persons = ({persons,setPersons}) => {
   return(
     <ul>
         {persons.map(person => 
-          <Person key={person.name} person={person}/>
+          <Person key={person.name} person={person}
+          deleteClick = {() => handleDeleteClick({person:person,setPersons:setPersons,persons:persons})}/>
         )}
-      </ul>
+    </ul>
   )
 }
 
@@ -110,7 +132,7 @@ const App = () => {
       <h2>Add a new person</h2>
       <PersonForm persons={persons} setPersons={setPersons} newName={newName} setNewName={setNewName} newNumber={newNumber} setNewNumber={setNewNumber}/>
       <h2>Numbers</h2>
-      <Persons persons={persons}/>
+      <Persons persons={persons} setPersons={setPersons}/>
       
     </div>
   )
