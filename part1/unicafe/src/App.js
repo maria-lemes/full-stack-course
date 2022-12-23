@@ -7,7 +7,16 @@ const Button = ({ handleClick, text }) => (
 )
 
 const StatisticLine = (props)=> {
-  return(<p>{props.name} {props.value}</p>)
+  return(
+    <table>
+      <tbody>
+      <tr>
+        <td>{props.name}</td>
+        <td>{props.value}</td>
+      </tr>
+      </tbody>
+      </table>
+    )
 }
 
 const Statistics = (props) => {
