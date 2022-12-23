@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState ,  useEffect } from 'react'
+import axios from 'axios'
 
 const Person = ({person}) => {
   return (
@@ -14,7 +15,7 @@ const PersonForm = ({persons, setPersons, newName, setNewName, newNumber, setNew
       number: newNumber,
       id: persons.length + 1,
     }
-    let contains = persons.some( person => person.name == newName)
+    let contains = persons.some( person => person.name === newName)
     
     if(contains){
       alert(`${newName} is already added to phonebook`);
@@ -65,13 +66,20 @@ const Persons = ({persons}) => {
 }
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas',
-      number: '99999'
-    }
-  ]) 
+  const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+
+  useEffect(() => {
+    console.log('effect')
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        console.log('promise fulfilled')
+        setPersons(response.data)
+      })
+  }, [])
+  console.log('render', persons.length, 'persons')
 
   
   return (
