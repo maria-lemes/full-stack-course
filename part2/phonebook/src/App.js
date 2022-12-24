@@ -2,6 +2,18 @@ import { useState ,  useEffect } from 'react'
 import axios from 'axios'
 import personService from './services/persons'
 
+const Notification = ({ message }) => {
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div className='addNumber'>
+      {message}
+    </div>
+  )
+}
+
 const Button = ({ handleClick, text }) => (
   <button onClick={handleClick}>
     {text}
@@ -16,7 +28,7 @@ const Person = ({person,deleteClick}) => {
   )
 }
 
-const PersonForm = ({persons, setPersons, newName, setNewName, newNumber, setNewNumber}) => {
+const PersonForm = ({persons, setPersons, newName, setNewName, newNumber, setNewNumber, setAddMessage}) => {
   const addPerson = (event) => {
     event.preventDefault()
     const personObject = {
@@ -30,15 +42,6 @@ const PersonForm = ({persons, setPersons, newName, setNewName, newNumber, setNew
       alert(`${newName} is already added to phonebook`);
     }else{
 
-      // axios
-      // .post('http://localhost:3001/persons', personObject)
-      // .then(response => {
-      // console.log(response)
-      // setPersons(persons.concat(response.data))
-      // setNewName('')
-      // setNewNumber('')
-      // })
-
       personService
         .create(personObject)
         .then(createdPerson => {
@@ -46,6 +49,12 @@ const PersonForm = ({persons, setPersons, newName, setNewName, newNumber, setNew
           setPersons(persons.concat(createdPerson))
           setNewName('')
           setNewNumber('')
+          setAddMessage(
+            `${personObject.name} was added to the phonebook`
+          )
+          setTimeout(() => {
+            setAddMessage(null)
+          }, 5000)
         })
       
     } 
@@ -108,29 +117,25 @@ const App = () => {
   const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+  const [addMessage, setAddMessage] = useState(null)
+
 
   useEffect(() => {
-    // console.log('effect')
-    // axios
-    //   .get('http://localhost:3001/persons')
-    //   .then(response => {
-    //     console.log('promise fulfilled')
-    //     setPersons(response.data)
-    //   })
     personService
       .getAll()
       .then(initialPersons=>{
         setPersons(initialPersons)
       })
   }, [])
-  //console.log('render', persons.length, 'persons')
+
 
   
   return (
     <div>
       <h2>Phonebook</h2>
       <h2>Add a new person</h2>
-      <PersonForm persons={persons} setPersons={setPersons} newName={newName} setNewName={setNewName} newNumber={newNumber} setNewNumber={setNewNumber}/>
+      <Notification message={addMessage} />
+      <PersonForm persons={persons} setPersons={setPersons} newName={newName} setNewName={setNewName} newNumber={newNumber} setNewNumber={setNewNumber} setAddMessage={setAddMessage}/>
       <h2>Numbers</h2>
       <Persons persons={persons} setPersons={setPersons}/>
       
