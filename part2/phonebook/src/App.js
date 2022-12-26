@@ -34,30 +34,36 @@ const PersonForm = ({persons, setPersons, newName, setNewName, newNumber, setNew
     const personObject = {
       name: newName,
       number: newNumber,
-      id: persons.length + 1,
     }
     let contains = persons.some( person => person.name === newName)
     
-    if(contains){
-      alert(`${newName} is already added to phonebook`);
-    }else{
-
       personService
         .create(personObject)
         .then(createdPerson => {
           console.log(createdPerson)
-          setPersons(persons.concat(createdPerson))
-          setNewName('')
-          setNewNumber('')
-          setAddMessage(
-            `${personObject.name} was added to the phonebook`
-          )
-          setTimeout(() => {
-            setAddMessage(null)
-          }, 5000)
-        })
-      
-    } 
+          if(!contains){
+            setPersons(persons.concat(createdPerson))
+            setNewName('')
+            setNewNumber('')
+            setAddMessage(
+              `${personObject.name} was added to the phonebook`
+            )
+            setTimeout(() => {
+              setAddMessage(null)
+            }, 5000)
+          }else{
+            const updatedPersons = persons.map(person => {
+              if(person.name === createdPerson.name){
+                return{
+                  ...person,
+                  number: createdPerson.number
+                }
+              } else return person   
+          })
+            setPersons(updatedPersons)
+          }
+        })   
+     
   }
 
   const handleNameChange = (event) => {
@@ -94,7 +100,7 @@ const handleDeleteClick = ({person,setPersons,persons}) => {
   if(window.confirm(`Delete ${person.name} ?`)){
     let deletedPerson = person
     axios
-    .delete(`http://localhost:3001/persons/${deletedPerson.id}`)
+    .delete(`/api/persons/${deletedPerson.id}`)
     .then(setPersons( persons.filter(person => person.id !== deletedPerson.id)))
     
   }
